@@ -1,0 +1,8 @@
+.github
+.gitignore
+.pytest_cache
+.coverage
+.htmlcov
+Dockerfile
+docker-compose.yml
+README.md
