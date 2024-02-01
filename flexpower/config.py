@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     environment: str = os.getenv("ENVIRONMENT", "dev")
     testing: bool = os.getenv("TESTING", True)  # type: ignore
     database_url: str = os.environ.get("DATABASE_URL")  # type: ignore
+    http_username: str = os.environ.get("HTTP_USERNAME")
+    http_password: str = os.environ.get("HTTP_PASSWORD")
 
 
 @lru_cache()

@@ -1,8 +1,9 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
 from flexpower.api import health, trade
+from flexpower.auth import verify_credentials
 from flexpower.db import create_db_and_tables
 
 log = logging.getLogger("uvicorn")
@@ -11,7 +12,11 @@ log = logging.getLogger("uvicorn")
 def create_application() -> FastAPI:
     application = FastAPI()
     application.include_router(health.router, tags=["health"])
-    application.include_router(trade.v1, tags=["trade"])
+    application.include_router(
+        trade.v1,
+        tags=["trade"],
+        dependencies=[Depends(verify_credentials)],
+    )
     return application
 
 
