@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     database_url: str = os.environ.get("DATABASE_URL")  # type: ignore
     http_username: str = os.environ.get("HTTP_USERNAME")
     http_password: str = os.environ.get("HTTP_PASSWORD")
+    postgres_user: str = os.environ.get("POSTGRES_USER")
+    postgres_password: str = os.environ.get("POSTGRES_PASSWORD")
+    postgres_db: str = os.environ.get("POSTGRES_DB")
+    postgres_host_auth_method: str = os.environ.get("POSTGRES_HOST_AUTH_METHOD")
 
 
 @lru_cache()

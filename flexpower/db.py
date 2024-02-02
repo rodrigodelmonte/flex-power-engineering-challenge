@@ -3,7 +3,10 @@ from sqlmodel import Session, SQLModel, create_engine
 from flexpower.config import get_settings
 
 config = get_settings()
-engine = create_engine(config.database_url, connect_args={"check_same_thread": False})
+
+DATABASE_URL = f"postgresql+psycopg2://{config.postgres_user}:{config.postgres_password}@db:5432/{config.postgres_db}"
+
+engine = create_engine(DATABASE_URL)
 
 
 def get_session():

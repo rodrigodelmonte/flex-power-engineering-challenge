@@ -13,6 +13,7 @@ pydantic-settings = "^2.1.0"
 uvicorn = {extras = ["standard"], version = "^0.27.0.post1"}
 fastapi = "^0.109.0"
 sqlmodel = "^0.0.14"
+psycopg2-binary = "^2.9.9"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
@@ -25,6 +26,7 @@ uvicorn = {extras = ["standard"], version = "^0.27.0.post1"}
 fastapi = "^0.109.0"
 httpx = "^0.26.0"
 sqlmodel = "^0.0.14"
+psycopg2-binary = "^2.9.9"
 
 [build-system]
 requires = ["poetry-core"]
@@ -38,7 +40,8 @@ line_length = 99
 line_length = 99
 
 [tool.taskipy.tasks]
-run = "uvicorn flexpower.main:app --reload --workers 1 --host 0.0.0.0 --port 8000"
+run = "docker-compose up --build --force-recreate"
+clean = "docker-compose rm -f -s -v"
 lint = "black --check --diff . && isort --check --diff ."
 test = "pytest -s -x --cov=flexpower/ -vv -W ignore"
 post_test = "coverage html"
