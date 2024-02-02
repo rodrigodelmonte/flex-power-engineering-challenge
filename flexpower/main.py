@@ -1,6 +1,8 @@
 import logging
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from pydantic_core import ValidationError
 
 from flexpower.api import health, trade
 from flexpower.auth import verify_credentials
@@ -21,6 +23,22 @@ def create_application() -> FastAPI:
 
 
 app = create_application()
+
+
+@app.exception_handler(ValidationError)
+async def pydantic_core_validation_exception_handler(request: Request, exc: ValidationError):
+    errors = [
+        {
+            "field": e["loc"][0],
+            "field_type": e["type"],
+            "error_message": e["msg"],
+        }
+        for e in exc.errors()
+    ]
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"status_code": status.HTTP_422_UNPROCESSABLE_ENTITY, "message": errors},
+    )
 
 
 @app.on_event("startup")
