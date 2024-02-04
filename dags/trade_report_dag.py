@@ -57,35 +57,37 @@ def post_csv_records_to_api(filepath):
 
 
 dag = DAG(
-    dag_id="trade_report_v01",
+    dag_id="trade_report_dag",
     description="Process daily report trades",
     default_args=DEFAULT_ARGS,
 )
 
-wait_for_csv = FileSensor(
-    task_id="wait_for_csv",
-    filepath=DEFAULT_ARGS.get("filepath"),
-    poke_interval=5,
-    timeout=60,
-    dag=dag,
-)
+with dag:
 
-process_csv = PythonOperator(
-    task_id="process_csv",
-    python_callable=post_csv_records_to_api,
-    op_kwargs={
-        "filepath": DEFAULT_ARGS.get("filepath"),
-    },
-    dag=dag,
-)
+    wait_for_csv = FileSensor(
+        task_id="wait_for_csv",
+        filepath=DEFAULT_ARGS.get("filepath"),
+        poke_interval=5,
+        timeout=60,
+        dag=dag,
+    )
 
-check_result = HttpSensor(
-    task_id="check_result",
-    http_conn_id="trade_api",
-    endpoint="/v1/trades?delivery_day={{ds}}",
-    method="GET",
-    response_check=lambda response: response.status_code == 200,
-    dag=dag,
-)
+    process_csv = PythonOperator(
+        task_id="process_csv",
+        python_callable=post_csv_records_to_api,
+        op_kwargs={
+            "filepath": DEFAULT_ARGS.get("filepath"),
+        },
+        dag=dag,
+    )
 
-wait_for_csv >> process_csv >> check_result
+    check_result = HttpSensor(
+        task_id="check_result",
+        http_conn_id="trade_api",
+        endpoint="/v1/trades?delivery_day={{ds}}",
+        method="GET",
+        response_check=lambda response: response.status_code == 200,
+        dag=dag,
+    )
+
+    wait_for_csv >> process_csv >> check_result
